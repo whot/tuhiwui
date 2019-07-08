@@ -29,6 +29,7 @@ cd tuhiwui
 npm install --save-dev electron
 npm install dbus
 npm install electron-is-dev
+npm install --save-dev typescript
 npm install --save-dev electron-builder
 npm install --save-dev electron-rebuild
 ./node_modules/.bin/electron-rebuild -p -t "dev,prod,optional"
