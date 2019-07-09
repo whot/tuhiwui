@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, Menu } = require('electron')
 const path = require('path')
 
 const isDev = require('electron-is-dev')
@@ -8,6 +8,9 @@ const isDev = require('electron-is-dev')
 let win
 
 function createWindow () {
+  // Remove menubar
+  Menu.setApplicationMenu(null); // https://github.com/electron/electron/issues/16521
+
   // Create the browser window.
   win = new BrowserWindow({
     width: 800,
