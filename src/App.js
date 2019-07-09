@@ -9,6 +9,62 @@ function debug() {
   ipcRenderer.send('tuhi-debug', Array.prototype.join.call(arguments, ''))
 }
 
+class DeviceNameEntry extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {}
+  }
+  render() {
+    return (
+            <div>{this.props.device.name}</div>
+    )
+  }
+}
+
+// The panel shown when we have a connection
+class PanelConnected extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {"devices": []}
+  }
+
+  componentDidMount() {
+    ipcRenderer.on('tuhi-devices', (event, arg) => {
+      this.setState({"devices": arg.devices})
+    })
+    ipcRenderer.send('tuhi-devices', null);
+
+  }
+
+  render () {
+    const devices = this.state.devices.map((d) =>
+       <DeviceNameEntry device={d} />
+    )
+    return (
+            <div id="PanelConnected">
+              {devices}
+            <div id="new device">
+              Add new device
+            </div>
+            </div>
+    )
+  }
+}
+
+// The panel shown when we cannot connect to Tuhi
+class PanelNotConnected extends React.Component {
+  render() {
+    return (
+            <div id="PanelNotConnected">
+              Unable to establish a connection to Tuhi.
+              <div className="helpeText">
+                The DBus service may not be running.
+              </div>
+            </div>
+    )
+  }
+}
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -25,19 +81,18 @@ class App extends React.Component {
   }
 
   render() {
-
     if (this.state.connected)
       return (
 	<div className="App">
-	     Connection established
+              <PanelConnected />
 	</div>
       );
     else
       return (
 	<div className="App">
-	     Unable to connect to Tuhi
-	</div>
-      );
+              <PanelNotConnected />,
+        </div>
+      )
   }
 }
 

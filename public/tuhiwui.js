@@ -69,6 +69,11 @@ app.on('activate', () => {
 // tuhi-connect(void)
 //   -> tuhi-connection-status({connection: bool})
 //   Establish initial connection to Tuhi
+//
+// tuhi-devices(void)
+//   -> tuhi-devices({devices: [devices] })
+//   Return a list of available devices
+
 
 ipcMain.on('tuhi-connect', function (event, arg) {
   debug('connecting to tuhi')
@@ -79,6 +84,12 @@ ipcMain.on('tuhi-connect', function (event, arg) {
       event.sender.send('tuhi-connection-status', {status: false});
       return;
     }
+
+    ipcMain.on('tuhi-devices', function(event, arg) {
+      debug('fetching devices')
+      event.sender.send('tuhi-devices', {"devices": tuhi.devices});
+    });
+
 
     event.sender.send('tuhi-connection-status', {"status": true});
   });
