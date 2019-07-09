@@ -22,7 +22,7 @@ var Tuhi = module.exports = function() {
   self.systemBus = dbus.getBus('system'); // for BlueZ
   self.manager = null;
   self.searching = false;
-  self.devices = {};
+  self.devices = [];
 
   self.unregistered_device_cb = null;
 };
@@ -51,7 +51,7 @@ Tuhi.prototype.init = function(callback) {
             return;
           }
 
-          self.devices[device.name] = device;
+          self.devices.push(device)
           self.emit('DeviceAdded', device);
         });
       });
