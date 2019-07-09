@@ -17,6 +17,7 @@ var TuhiDevice = module.exports = function(tuhi, objpath) {
     self.iface = null;
     self.name = 'unknown';
     self.register_callback = null;
+    self.drawings = [];
 };
 
 util.inherits(TuhiDevice, events.EventEmitter);
@@ -54,27 +55,38 @@ TuhiDevice.prototype.init = function(callback) {
     });
 
     iface.getProperties(function(err, props) {
+      var promises = [];
+
       self.listening = props.Listening;
-      self.drawings = props.DrawingsAvailable;
 
-      self.manager.systemBus.getInterface('org.bluez', props.BlueZDevice, 'org.bluez.Device1',
+      props.DrawingsAvailable.forEach((ts) => {
+        promises.push(new Promise((resolve, reject) => {
+          self.iface.GetJSONData(1, ts, function(err, data) {
+            if (err)
+              reject(err)
+            self.drawings.push(JSON.parse(data));
+            resolve(data)
+          });
+        }));
+      })
+
+      promises.push(new Promise((resolve, reject) => {
+        self.manager.systemBus.getInterface('org.bluez', props.BlueZDevice, 'org.bluez.Device1',
                                           function(err, bluez_iface) {
-        if (err) {
-        if (callback)
-          callback(err);
-          return;
-        }
+          if (err)
+            reject(err);
 
-        bluez_iface.getProperties(function(err, bluez_props) {
-          self.name = bluez_props.Name;
-          self.address = bluez_props.Address;
-          debug('... bluez device: ', self.name, ' (', self.address, ')');
+          bluez_iface.getProperties(function(err, bluez_props) {
+            self.name = bluez_props.Name;
+            self.address = bluez_props.Address;
+            debug('bluez device: ', self.name, ' (', self.address, ')');
 
-          // We don't finish init() until we have all properties loaded
-          if (callback)
-            callback(null);
-
+            resolve(self.name);
+          });
         });
+      }));
+      Promise.all(promises).then((values) => {
+        callback(null);
       });
     });
   });
