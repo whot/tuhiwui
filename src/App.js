@@ -11,10 +11,6 @@ function debug() {
 
 // A single entry in the list of devices
 class DeviceNameEntry extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   handleClick(e) {
     e.preventDefault();
     console.log('The link was clicked.');
@@ -27,14 +23,74 @@ class DeviceNameEntry extends React.Component {
   }
 }
 
-class DevicePanel extends React.Component {
+class Drawing extends React.Component {
+  constructor(props) {
+    super(props);
+    this.svg_scale = 100;
+  }
+
+  points(stroke) {
+    const points = stroke.points.map((p) =>
+      ' ' +  p.position[0]/this.svg_scale + ' ' + p.position[1]/this.svg_scale
+    );
+    return "M " + points.join(' ');
+  }
+
+  strokes() {
+    const stroke = this.props.drawing.strokes.map((s) =>
+      <g><path stroke="black" stroke-width="2" style={{fill: "none"}} d={this.points(s)} />
+       </g>
+    );
+    return stroke;
+  }
+
+  svg() {
+    const drawing = this.props.drawing
+    const width  = drawing.dimensions[0]/this.svg_scale;
+    const height = drawing.dimensions[1]/this.svg_scale;
+    return (
+      <svg baseProfile="full" height={height} version="1.1" width={width}>
+        <defs />
+        {this.strokes()}
+      </svg>
+    );
+  }
+
   render() {
     return (
-            <div className="DevicePanel">
-              <div className="DeviceName">
-                {this.props.device.name}
-              </div>
-            </div>
+      <div className="Drawing">
+        <div className="Timestamp">{this.props.drawing.timestamp}</div>
+        <div className="Svg">
+          {this.svg()}
+        </div>
+      </div>
+    );
+  }
+}
+
+class DevicePanel extends React.Component {
+  renderDrawing(drawing) {
+    return <Drawing drawing={drawing} />
+  }
+
+  renderDrawings() {
+    const drawings = this.props.device.drawings.map((d) =>
+      <div>{this.renderDrawing(d)}</div>
+    );
+
+    return <div>{drawings}</div>
+  }
+
+  render() {
+    return (
+      <div className="DevicePanel">
+        <div className="DeviceName">
+          {this.props.device.name}
+        </div>
+        <div className="Drawings">
+          {this.renderDrawings()}
+        </div>
+      </div>
     )
   }
 }

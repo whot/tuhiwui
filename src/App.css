@@ -90,7 +90,7 @@ body {
 }
 
 .DevicePanel {
-  background-color: #ffffff;
+  background-color: #dedede;
   min-height: 80vh;
   width: 80%;
   display: flex;
@@ -100,4 +100,17 @@ body {
   font-size: calc(10px + 2vmin);
   color: white;
   border-radius: 10px;
+}
+
+.Drawing {
+}
+
+.Svg {
+  background-color: white;
+  margin: 10px;
+  border: 1px solid black;
+}
+
+.Timestamp {
+  color: black;
 }
