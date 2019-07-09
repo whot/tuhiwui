@@ -14,9 +14,10 @@ class DeviceNameEntry extends React.Component {
     super(props);
     this.state = {}
   }
+
   render() {
     return (
-            <div>{this.props.device.name}</div>
+            <div className="DeviceName">{this.props.device.name}</div>
     )
   }
 }
@@ -38,14 +39,14 @@ class PanelConnected extends React.Component {
 
   render () {
     const devices = this.state.devices.map((d) =>
-       <DeviceNameEntry device={d} />
+       <DeviceNameEntry key={d} device={d} />
     )
     return (
             <div id="PanelConnected">
-              {devices}
-            <div id="new device">
-              Add new device
+            <div id="NewDevice">
+              add new device
             </div>
+              {devices}
             </div>
     )
   }
@@ -53,6 +54,7 @@ class PanelConnected extends React.Component {
 
 // The panel shown when we cannot connect to Tuhi
 class PanelNotConnected extends React.Component {
+  // FIXME: should have some "reconnect" option here
   render() {
     return (
             <div id="PanelNotConnected">
