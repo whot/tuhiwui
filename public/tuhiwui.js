@@ -1,7 +1,11 @@
 const { app, BrowserWindow, Menu } = require('electron')
 const path = require('path')
-
+const {ipcMain} = require('electron')
 const isDev = require('electron-is-dev')
+const Tuhi = require('./tuhi');
+
+var debug = require('debug')('tuhiwui');
+var debug_react = require('debug')('tuhi-react');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -60,5 +64,27 @@ app.on('activate', () => {
   }
 })
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
+// Tuhi IPC communication protocol
+//
+// tuhi-connect(void)
+//   -> tuhi-connection-status({connection: bool})
+//   Establish initial connection to Tuhi
+
+ipcMain.on('tuhi-connect', function (event, arg) {
+  debug('connecting to tuhi')
+  tuhi = new Tuhi();
+  tuhi.init(function(error) {
+    if (error) {
+      debug('Failed to connect to Tuhi')
+      event.sender.send('tuhi-connection-status', {status: false});
+      return;
+    }
+
+    event.sender.send('tuhi-connection-status', {"status": true});
+  });
+});
+
+
+ipcMain.on('tuhi-debug', function(event, arg) {
+  debug_react(arg);
+});
