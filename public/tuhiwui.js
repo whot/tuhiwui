@@ -74,10 +74,15 @@ app.on('activate', () => {
 //   -> tuhi-devices({devices: [devices] })
 //   Return a list of available devices
 
+const tuhi = new Tuhi();
 
 ipcMain.on('tuhi-connect', function (event, arg) {
-  debug('connecting to tuhi')
-  tuhi = new Tuhi();
+  if (tuhi.connected) {
+    event.sender.send('tuhi-connection-status', {"status": true});
+    return;
+  }
+
+  debug('connecting to tuhi');
   tuhi.init(function(error) {
     if (error) {
       debug('Failed to connect to Tuhi')

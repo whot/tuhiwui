@@ -17,6 +17,7 @@ var dbus = new DBus();
 var Tuhi = module.exports = function() {
   var self = this;
 
+  self.connected = false;
   self.dbus = dbus;
   self.sessionBus = dbus.getBus('session');
   self.systemBus = dbus.getBus('system'); // for BlueZ
@@ -88,6 +89,7 @@ Tuhi.prototype.init = function(callback) {
       });
     });
 
+    self.connected = true;
     if (callback)
       callback();
   });
