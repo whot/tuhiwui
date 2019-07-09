@@ -20,13 +20,11 @@ function createWindow () {
   if (isDev) {
     console.log('Running in developer mode for http://localhost:3000')
     win.loadURL('http://localhost:3000')
+    win.webContents.openDevTools()
   } else {
     win.loadURL(`file://${path.join(__dirname, '../build/index.html')}`)
   }
 
-
-  // Open the DevTools.
-  win.webContents.openDevTools()
 
   // Emitted when the window is closed.
   win.on('closed', () => {
