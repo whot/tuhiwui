@@ -9,16 +9,39 @@ function debug() {
   ipcRenderer.send('tuhi-debug', Array.prototype.join.call(arguments, ''))
 }
 
+// A single entry in the list of devices
 class DeviceNameEntry extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {}
+  }
+
+  handleClick(e) {
+    e.preventDefault();
+    console.log('The link was clicked.');
   }
 
   render() {
     return (
-            <div className="DeviceName">{this.props.device.name}</div>
+            <div onClick={this.handleClick} className="DeviceName">{this.props.device.name}</div>
     )
+  }
+}
+
+class DevicePanel extends React.Component {
+  render() {
+    return (
+            <div className="DevicePanel">
+              <div className="DeviceName">
+                {this.props.device.name}
+              </div>
+            </div>
+    )
+  }
+}
+
+class AddNewDevicePanel extends React.Component {
+  render() {
+    return <div id="NewDevice">add new device</div>
   }
 }
 
@@ -26,27 +49,33 @@ class DeviceNameEntry extends React.Component {
 class PanelConnected extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {"devices": []}
+    /* It's so niche that someone has two devices (other than us
+     * developers), so let's just focus on whatever the first
+     * device is. We'll eventually need some button to add devices or switch
+     * between them.
+     */
+    this.state = {"devices": [],
+                  "activeidx": 0}
   }
 
   componentDidMount() {
     ipcRenderer.on('tuhi-devices', (event, arg) => {
       this.setState({"devices": arg.devices})
     })
-    ipcRenderer.send('tuhi-devices', null);
-
+    ipcRenderer.send('tuhi-devices', null)
   }
 
   render () {
-    const devices = this.state.devices.map((d) =>
-       <DeviceNameEntry key={d} device={d} />
-    )
+    var panel;
+    if (this.state.devices.length) {
+      const active = this.state.devices[this.state.activeidx]
+      panel = <DevicePanel device={active} />
+    } else {
+      panel = <AddNewDevicePanel />
+    }
     return (
             <div id="PanelConnected">
-            <div id="NewDevice">
-              add new device
-            </div>
-              {devices}
+            {panel}
             </div>
     )
   }
