@@ -1,4 +1,7 @@
 const { app, BrowserWindow } = require('electron')
+const path = require('path')
+
+const isDev = require('electron-is-dev')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -14,8 +17,13 @@ function createWindow () {
     }
   })
 
-  // and load the index.html of the app.
-  win.loadURL('http://localhost:3000')
+  if (isDev) {
+    console.log('Running in developer mode for http://localhost:3000')
+    win.loadURL('http://localhost:3000')
+  } else {
+    win.loadURL(`file://${path.join(__dirname, '../build/index.html')}`)
+  }
+
 
   // Open the DevTools.
   win.webContents.openDevTools()
