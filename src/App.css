@@ -1,3 +1,7 @@
+body {
+  background-color: #282c34;
+}
+
 .App {
   text-align: center;
 }
@@ -11,6 +15,14 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  margin: auto;
+  border-radius: 10px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+
 }
 
 #PanelConnected {
@@ -51,4 +63,28 @@
   font-size: calc(10px + 2vmin);
   color: black;
   font-weight: bold;
+}
+
+#reconnect button {
+  background-color: #dedede;
+  border: none;
+  color: black;
+  margin-top: 30px;
+  padding: 10px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: calc(10px + 2vmin);
+  border-radius: 10px;
+  transition: all 0.2s;
+  opacity: 0.6;
+}
+
+
+#reconnect button:hover {
+  opacity: 1;
+}
+
+#reconnect button:active {
+  opacity: 0.1;
 }

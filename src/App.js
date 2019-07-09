@@ -54,14 +54,20 @@ class PanelConnected extends React.Component {
 
 // The panel shown when we cannot connect to Tuhi
 class PanelNotConnected extends React.Component {
-  // FIXME: should have some "reconnect" option here
+  handleClick(e) {
+    ipcRenderer.send('tuhi-connect')
+  }
+
   render() {
     return (
             <div id="PanelNotConnected">
-              Unable to establish a connection to Tuhi.
-              <div className="helpeText">
-                The DBus service may not be running.
+              Disconnected
+              <div className="helperText">
+                Unable to connect to the Tuhi DBus service
               </div>
+               <div id="reconnect">
+                 <button className="animated" onClick={this.handleClick}>reconnect</button>
+               </div>
             </div>
     )
   }
@@ -83,18 +89,10 @@ class App extends React.Component {
   }
 
   render() {
-    if (this.state.connected)
-      return (
-	<div className="App">
-              <PanelConnected />
-	</div>
-      );
-    else
-      return (
-	<div className="App">
-              <PanelNotConnected />,
-        </div>
-      )
+    const panel = this.state.connected ? <PanelConnected /> : <PanelNotConnected />
+    return (
+      <div className="App">{panel}</div>
+    );
   }
 }
 
